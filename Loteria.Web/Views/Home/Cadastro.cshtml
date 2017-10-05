@@ -1,0 +1,45 @@
+﻿@model Loteria.Web.Models.JogoModels
+@{
+    ViewBag.Title = "Cadastro";
+}
+
+<h2>Cadastro</h2>
+@using (Html.BeginForm("CadastrarJogo", "Home", FormMethod.Post))
+{
+<div class="col-md-12">
+    <div class="content-box">        
+        <div class="box-body">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label for="nome_contador">Nome do Jogo</label>
+                    @Html.TextBoxFor(model => model.Nome, new { @class = "form-control", Value = Model.Nome })
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="cpf_contador">Número Inicial</label>
+                    @Html.TextBoxFor(model => model.NumeroInicial, new { @class = "form-control", Value = Model.NumeroInicial })
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="crc_contador">Quantidade de Números</label>
+                    @Html.TextBoxFor(model => model.QuantidadeNumeros, new { @class = "form-control", Value = Model.QuantidadeNumeros })
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="teste2">Min. de dez. no volante</label>
+                    @Html.TextBoxFor(model => model.QtdeMinNumeroMarcadoVolante, new { @class = "form-control", Value = Model.QtdeMinNumeroMarcadoVolante })
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="teste2">Max. de dez. no volante</label>
+                    @Html.TextBoxFor(model => model.QtdeMaxNumeroMarcadoVolante, new { @class = "form-control", Value = Model.QtdeMaxNumeroMarcadoVolante })
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="email_cadastro">Qtde de Dezenas Sorteadas</label>
+                    @Html.TextBoxFor(model => model.QtdeNumeroSorteados, new { @class = "form-control", Value = Model.QtdeNumeroSorteados })
+                </div>                
+            </div>           
+        </div>
+    </div>
+    <div class="box-footer">
+        <input class="btn btn-success botao-pesquisa" id="pesquisar" value="Pesquisar" type="submit" />
+    </div>
+</div>
+}
+

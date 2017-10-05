@@ -1,0 +1,58 @@
+﻿
+@model Loteria.Web.Models.LoteriaModels
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Loterias</h2>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <div class="content-box content-box-tabela" style="max-height:300px; overflow-y:auto; padding-top:20px;">
+                    <table id="tabela_resulst" class="tabela-padrao tabela-padrao-borda">
+                        <thead>
+                            <tr>
+                                <th style="width:500px;">Id</th>
+                                <th style="width:500px;">Nome</th>
+                                <th style="width:200px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.JogosCadastrados != null && Model.JogosCadastrados.Count > 0)
+            {
+                foreach (var item in Model.JogosCadastrados.OrderByDescending(P => P.Id).ToList())
+                {
+                                    <tr>
+                                        <td>
+                                            @item.Id.ToString("00")
+                                        </td>
+                                        <td>
+                                            @item.Nome
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("Apostas", "Home")?pId=@item.Id" title="Abrir" target="_self" class="btn btn-primary">
+                                                <i class="fa fa-search"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#JogoSelecionado").on("change", function () {
+                if ($(this).val() != 0)
+                window.location.href = "@Url.Action("Apostas", "Home")" + "?pId=" + $(this).val();
+            });
+        });
+    </script>
+}

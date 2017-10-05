@@ -1,0 +1,213 @@
+﻿@model Loteria.Web.Models.JogoModels
+
+@{
+    ViewBag.Title = "About";
+}
+<h2>@Model.Nome</h2>
+<div class="row">
+    <div class="col-md-6">
+        <div class="content-box">
+            <div class="box-title">Selecione o número do Volante</div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="radio col-md-12" style="padding-left:30px;">
+                        @{  int numeroInicial = Model.NumeroInicial;
+                            for (int i = 0; i < Model.QtdeLinhas; i++)
+                            {
+                                for (int j = 0; j < Model.QtdeColunas; j++)
+                                {
+                                    <label><input type="checkbox" name="volante" value="@numeroInicial" />@numeroInicial.ToString("00")</label>
+                                    numeroInicial++;
+                                }
+                                <br />
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <label>Qtda de números da surpresinha:</label>
+            <input class="text-center" style="width:50px;" id="qtde_surpresinha" type="text" value="@Model.QtdeMinNumeroMarcadoVolante" />
+            <div class="box-footer" style="text-align:right;">
+                <input class="btn btn-success" id="supresinha" value="Supresinha" type="button" />
+                <input class="btn btn-success" id="inserir" value="Inserir" type="submit" />                                
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="content-box">
+            <div class="box-title">Resultado do Sorteio</div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="radio col-md-12" style="padding-left:30px;">
+                        @{  numeroInicial = Model.NumeroInicial;
+                            for (int i = 0; i < Model.QtdeLinhas; i++)
+                            {
+                                for (int j = 0; j < Model.QtdeColunas; j++)
+                                {
+                                    <label><input type="checkbox" name="resultado" value="@numeroInicial" />@numeroInicial.ToString("00")</label>
+                                    numeroInicial++;
+                                }
+                                <br />
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer" style="text-align:right;">
+                <input class="btn btn-success" id="conferir" value="Conferir" type="submit" />
+                <input class="btn btn-success" id="gerar" value="Gerar" type="button" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="padding-top:20px;">
+    <div class="col-md-12">
+        <label style="font-size:16px;">VOLANTES CADASTRADOS</label>
+        <div id="dialog" style="padding-top:20px">
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+            $('input[name="volante"]').on("change", function () {
+                if (document.querySelectorAll('input[name="volante"]:checked').length > @Model.QtdeMaxNumeroMarcadoVolante)
+                {
+                    alert("O número máximo permitido é " + "@Model.QtdeMaxNumeroMarcadoVolante dezenas.");
+                    $(this).prop('checked', false);
+                }
+            });
+
+            $('input[name="resultado"]').on("change", function () {
+                if (document.querySelectorAll('input[name="resultado"]:checked').length > @Model.QtdeNumeroSorteados)
+                {
+                    alert("O número máximo permitido é " + "@Model.QtdeNumeroSorteados dezenas.");
+                    $(this).prop('checked', false);
+                }
+            });
+
+
+
+
+            $("#supresinha").on("click", function () {
+                if (($("#qtde_surpresinha").val() * 1) >= @Model.QtdeMinNumeroMarcadoVolante && ($("#qtde_surpresinha").val() * 1) <= @Model.QtdeMaxNumeroMarcadoVolante)
+                {
+                    var nodeLimpar = document.querySelectorAll('input[name="volante"]:checked');
+                    for (var i = 0; i < nodeLimpar.length; i++) {
+                        $(nodeLimpar[i]).prop('checked', false);
+                    }
+                    while (document.querySelectorAll('input[name="volante"]:checked').length < ($("#qtde_surpresinha").val() * 1)) {
+                        var numero = Math.floor((Math.random() * @Model.QuantidadeNumeros) + 1);
+                        var node = document.querySelectorAll('input[name="volante"][value="' + numero + '"]');
+                        var first = node[0];
+                        $(first).prop('checked', true);
+
+                    }
+                } else
+                    alert("A surpresinha deve ter de " + @Model.QtdeMinNumeroMarcadoVolante + " a "+ @Model.QtdeMaxNumeroMarcadoVolante + " dezenas marcadas.");
+            });
+
+           $("#gerar").on("click", function () {
+               var nodeLimpar = document.querySelectorAll('input[name="resultado"]:checked');
+                for (var i = 0; i < nodeLimpar.length; i++) {
+                    $(nodeLimpar[i]).prop('checked', false);
+                }
+                while (document.querySelectorAll('input[name="resultado"]:checked').length < @Model.QtdeNumeroSorteados)
+                {
+                    var numero = Math.floor((Math.random() * @Model.QuantidadeNumeros) + 1);
+                    var node = document.querySelectorAll('input[name="resultado"][value="' + numero + '"]');
+                    var first = node[0];
+                    $(first).prop('checked', true);
+
+                }
+            });
+
+            $("#inserir").on("click", function () {
+                if (document.querySelectorAll('input[name="volante"]:checked').length >= @Model.QtdeMinNumeroMarcadoVolante && document.querySelectorAll('input[name="volante"]:checked').length <= @Model.QtdeMaxNumeroMarcadoVolante)
+                {
+                    var numeros = "";
+                    var nobe = document.querySelectorAll('input[name="volante"]:checked');
+                    for (var i = 0; i < nobe.length; i++) {
+                        if(i == 0)
+                            numeros = numeros + "" + $(nobe[i]).val();
+                        else
+                            numeros = numeros + ";" + $(nobe[i]).val();
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "/Home/InserirAposta",
+                        async: false,
+                        data: { pId: @Model.Id,  pNumeros: numeros },
+                        dataType: 'Html',
+                        success: function (response) {
+                            $('#dialog').html(response);
+                        },
+                        failure: function (jqXHR, textStatus, errorThrown) {
+                            alert(errorThrown);
+                            window.location.href = "@Url.Action("Index", "Home")";
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert(errorThrown);
+                            window.location.href = "@Url.Action("Index", "Home")";
+                        }
+                    });
+                    var nodeLimpar = document.querySelectorAll('input[name="volante"]:checked');
+                    for (var i = 0; i < nodeLimpar.length; i++) {
+                        $(nodeLimpar[i]).prop('checked', false);
+                    }
+
+                } else {
+                    alert("Para cadastrar uma nova aposta deve ter entre " + @Model.QtdeMinNumeroMarcadoVolante + " a "+ @Model.QtdeMaxNumeroMarcadoVolante + " dezenas marcadas.");
+                    return false;
+                }
+           });
+
+            $("#conferir").on("click", function () {
+                if (document.querySelectorAll('input[name="resultado"]:checked').length == @Model.QtdeNumeroSorteados )
+                {
+                    var numeros = "";
+                    var nobe = document.querySelectorAll('input[name="resultado"]:checked');
+                    for (var i = 0; i < nobe.length; i++) {
+                        if(i == 0)
+                            numeros = numeros + "" + $(nobe[i]).val();
+                        else
+                            numeros = numeros + ";" + $(nobe[i]).val();
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Home/Conferir",
+                        async: false,
+                        data: { pId: @Model.Id,  pNumeros: numeros },
+                        dataType: 'Html',
+                        success: function (response) {
+                            $('#dialog').html(response);
+                        },
+                        failure: function (jqXHR, textStatus, errorThrown) {
+                            alert(errorThrown);
+                            window.location.href = "@Url.Action("Index", "Home")";
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert(errorThrown);
+                            window.location.href = "@Url.Action("Index", "Home")";
+                        }
+                    });
+                    var nodeLimpar = document.querySelectorAll('input[name="volante"]:checked');
+                    for (var i = 0; i < nodeLimpar.length; i++) {
+                        $(nodeLimpar[i]).prop('checked', false);
+                    }
+
+                } else {
+                    alert("A quantidade de números sorteados para esse jogo é " + @Model.QtdeNumeroSorteados + ".");
+                    return false;
+                }
+            });
+
+        });
+    </script>
+}
+

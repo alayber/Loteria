@@ -1,0 +1,42 @@
+﻿@model Loteria.Web.Models.JogoModels
+<div class="content-box content-box-tabela" style="max-height:300px; overflow-y:auto; padding-top:20px;">
+    <table id="tabela_resulst" class="tabela-padrao tabela-padrao-borda">
+        <thead>
+            <tr>
+                <th style="width:100px;">Sequência</th>
+                <th style="width:200px;">Data do Cadastro</th>
+                <th style="width:500px;">Números</th>
+                <th style="width:50px;">Acertos</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.ApostasFeitas != null && Model.ApostasFeitas.Count > 0)
+            {
+                foreach (var item in Model.ApostasFeitas.OrderByDescending(P => P.Id).ToList())
+                {
+                    <tr>
+                        <td>
+                            @item.Id.ToString("00")
+                        </td>
+                        <td>
+                            @item.DataCadastro.ToString("dd/MM/yyyy")
+                        </td>
+                        <td>
+                            @foreach (var numero in item.NumerosSelecionados)
+                            {
+                                <n>@numero.ToString("00")  </n>;
+                            }
+
+                        </td>
+                        <td>
+                            @if(ViewBag.Resultado != null)
+                            {
+                                @(item.QuantidadeAcertos(ViewBag.Resultado));
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
