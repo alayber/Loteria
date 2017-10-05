@@ -40,15 +40,6 @@ namespace Loteria.Web.Controllers
                 megaSena.QtdeMaxNumeroMarcadoVolante = 15;
                 megaSena.QtdeNumeroSorteados = 6;
                 Loteria.JogosCadastrados.Add(megaSena);
-                var quina = new JogoModels();
-                quina.Id = 2;
-                quina.Nome = "Quina";
-                quina.NumeroInicial = 1;
-                quina.QuantidadeNumeros = 90;
-                quina.QtdeMinNumeroMarcadoVolante = 5;
-                quina.QtdeMaxNumeroMarcadoVolante = 15;
-                quina.QtdeNumeroSorteados = 5;
-                Loteria.JogosCadastrados.Add(quina);
             }
             return View(Loteria);
         }
@@ -119,8 +110,7 @@ namespace Loteria.Web.Controllers
                 return PartialView("Volantes", jogo);
             }
             catch (Exception)
-            {
-                //throw new Exception("Erro ao inserir nova aposta.");
+            {                
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Não foi possível inserir uma nova aposta.");
             }
 
@@ -143,8 +133,7 @@ namespace Loteria.Web.Controllers
                 return PartialView("Volantes", jogo);
             }
             catch (Exception)
-            {
-                //throw new Exception("Erro ao inserir nova aposta.");
+            {                
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Não foi possível conferir o resultado.");
             }
 

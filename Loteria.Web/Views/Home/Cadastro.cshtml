@@ -4,6 +4,11 @@
 }
 
 <h2>Cadastro</h2>
+<div class="row">
+    <div class="col-md-12" style="text-align:right;">
+        <a href="@Url.Action("Index", "Home")">Voltar</a>
+    </div>
+</div>
 @using (Html.BeginForm("CadastrarJogo", "Home", FormMethod.Post))
 {
 <div class="col-md-12">
@@ -38,7 +43,7 @@
         </div>
     </div>
     <div class="box-footer">
-        <input class="btn btn-success botao-pesquisa" id="pesquisar" value="Pesquisar" type="submit" />
+        <input class="btn btn-success botao-pesquisa" id="pesquisar" value="Salvar" type="submit" />
     </div>
 </div>
 }
