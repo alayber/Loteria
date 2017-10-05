@@ -117,6 +117,25 @@ namespace Loteria.Web.Controllers
         }
 
         [HttpPost]
+        public ActionResult LimparApostas(int pId)
+        {
+            try
+            {
+                var jogo = Loteria.JogosCadastrados.Where(p => p.Id == pId).FirstOrDefault();
+                if (jogo.ApostasFeitas != null)
+                    jogo.ApostasFeitas = null;
+
+                return PartialView("Volantes", jogo);
+            }
+            catch (Exception)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Não foi possível inserir uma nova aposta.");
+            }
+
+        }
+
+
+        [HttpPost]
         public ActionResult Conferir(int pId, string pNumeros)
         {
             try

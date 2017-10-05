@@ -33,8 +33,9 @@
             <label>Qtda de números da surpresinha:</label>
             <input class="text-center" style="width:50px;" id="qtde_surpresinha" type="text" value="@Model.QtdeMinNumeroMarcadoVolante" />
             <div class="box-footer" style="text-align:right;">
+                <input class="btn btn-success" id="limpar" value="Limpar Apostas" type="button" style="margin-right:30%;" />
                 <input class="btn btn-success" id="supresinha" value="Supresinha" type="button" />
-                <input class="btn btn-success" id="inserir" value="Inserir" type="submit" />
+                <input class="btn btn-success" id="inserir" value="Inserir" type="button" />
             </div>
         </div>
     </div>
@@ -59,7 +60,7 @@
                 </div>
             </div>
             <div class="box-footer" style="text-align:right;">
-                <input class="btn btn-success" id="conferir" value="Conferir" type="submit" />
+                <input class="btn btn-success" id="conferir" value="Conferir" type="button" />
                 <input class="btn btn-success" id="gerar" value="Gerar" type="button" />
             </div>
         </div>
@@ -164,6 +165,28 @@ function ChamarComandoAjax(pUrl,pId,pListaNumeros)
                 MarcarAleatoriamenteCheckBox('resultado',@Model.QtdeNumeroSorteados,@Model.QuantidadeNumeros);
             });
 
+           $("#limpar").on("click", function () {
+               $.ajax({
+                   type: "POST",
+                   url: "/Home/LimparApostas",
+                   async: false,
+                   data: { pId: @Model.Id },
+                   dataType: 'Html',
+                   success: function (response) {
+                       $('#dialog').html(response);
+                   },
+                   failure: function (jqXHR, textStatus, errorThrown) {
+                       alert(errorThrown);
+                       window.location.href = "@Url.Action("Index", "Home")";
+                   },
+                   error: function (jqXHR, textStatus, errorThrown) {
+                       alert(errorThrown);
+                       window.location.href = "@Url.Action("Index", "Home")";
+                   }
+
+               });
+           });
+
 
             $("#inserir").on("click", function () {
                 if (document.querySelectorAll('input[name="volante"]:checked').length >= @Model.QtdeMinNumeroMarcadoVolante && document.querySelectorAll('input[name="volante"]:checked').length <= @Model.QtdeMaxNumeroMarcadoVolante)
@@ -183,8 +206,6 @@ function ChamarComandoAjax(pUrl,pId,pListaNumeros)
                 {
                     var listaNumeros = ListaNumerosMarcados('resultado');
                     ChamarComandoAjax("/Home/Conferir", @Model.Id, listaNumeros);
-                    LimparCheckbox(document.querySelectorAll('input[name="resultado"]:checked'));
-
                 } else {
                     alert("A quantidade de números sorteados para esse jogo deve ser " + @Model.QtdeNumeroSorteados + ".");
                     return false;
